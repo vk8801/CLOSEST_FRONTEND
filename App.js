@@ -76,32 +76,13 @@ const ProfileCard = () => {
   );
 };
 
-const TabBar = ({ activeTab, setActiveTab }) => {
-  const insets = useSafeAreaInsets(); // Use insets to adjust padding for the bottom tab bar
-  
-  return (
-    <View style={[styles.tabBarContainer, { paddingBottom: insets.bottom + 20 }]}>
-      {TABS.map((tab) => (
-        <TabButton
-          key={tab}
-          name={tab}
-          isActive={activeTab === tab}
-          onPress={() => setActiveTab(tab)}
-        />
-      ))}
-    </View>
-  );
-};
-
 // Component to handle safe area view wrapper
 const AppContent = () => {
-  const [activeTab, setActiveTab] = useState('Explore');
   const insets = useSafeAreaInsets();
-  
   return (
     <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
       <ProfileCard />
-      <TabBar activeTab={activeTab} setActiveTab={setActiveTab} />
+      {/* Remove <TabBar ... /> */}
     </View>
   );
 };

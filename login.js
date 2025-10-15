@@ -6,11 +6,12 @@ import {
   TextInput,
   TouchableOpacity,
   Dimensions,
-  // Removed SafeAreaView import
+  ScrollView, // <-- Add this import
 } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context'; // Import safe area context hooks
-// Note: You might need to install 'expo-font' to use custom fonts, 
-// but for simplicity, we'll use system fonts with high weight/style.
+import { useNavigation } from '@react-navigation/native'; // Add this import
+import { FontAwesome } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
@@ -29,12 +30,15 @@ const HeaderText = ({ children, style }) => (
   <Text style={[styles.headerText, style]}>{children}</Text>
 );
 
+
 // --- Components ---
 
 // A simple Checkbox replacement for cross-platform consistency
 const CustomCheckbox = ({ checked, onPress }) => (
   <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
-    <View style={[styles.checkbox, checked && styles.checkboxChecked]} />
+    <View style={[styles.checkbox, checked && styles.checkboxChecked]}>
+      {checked && <Text style={styles.checkboxTick}>✓</Text>}
+    </View>
   </TouchableOpacity>
 );
 
@@ -43,79 +47,92 @@ const UserOnboardingContent = () => {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const insets = useSafeAreaInsets(); // Get current safe area insets
+  const navigation = useNavigation(); // Add this line
 
   return (
     <View style={[styles.fullScreen, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-      {/* Top Header Section */}
-      <View style={styles.topHeader}>
+      {/* Background Header Section */}
+      <View style={styles.backgroundHeader}>
         <HeaderText style={styles.headerUser}>User</HeaderText>
         <HeaderText style={styles.headerOnboarding}>ONBOARDING</HeaderText>
       </View>
 
       {/* Main Content Area (Teal Background) */}
-      <View style={styles.contentContainer}>
-        {/* Logo Circle */}
-        <View style={styles.logoCircle}>
-          <Text style={styles.logoText}>Logo</Text>
-        </View>
-
-        {/* Welcome Text */}
-        <Text style={styles.welcomeText}>Welcome Back</Text>
-
-        {/* Input Fields */}
-        <TextInput
-          style={styles.input}
-          placeholder="UserName"
-          placeholderTextColor="#888"
-          value={username}
-          onChangeText={setUsername}
-          autoCapitalize="none"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#888"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-
-        {/* Remember Me / Forgot Password */}
-        <View style={styles.rowBetween}>
-          <View style={styles.row}>
-            <CustomCheckbox checked={rememberMe} onPress={() => setRememberMe(!rememberMe)} />
-            <Text style={styles.reminderText}>Remember me</Text>
+      <ScrollView
+        contentContainerStyle={[styles.scrollContent, { paddingTop: 120 }]} // Add top padding so header is visible
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.contentContainer}>
+          {/* Transparent Logo Circle */}
+          <View style={styles.logoCircle}>
+            <Text style={styles.logoText}>Logo</Text>
           </View>
-          <TouchableOpacity onPress={() => console.log('Forgot Password')}>
-            <Text style={[styles.linkText, { color: COLORS.darkBlue }]}>Forgot Password?</Text>
+
+          {/* Welcome Text */}
+          <Text style={styles.welcomeText}>Welcome Back</Text>
+
+          {/* Input Fields */}
+          <TextInput
+            style={styles.input}
+            placeholder="UserName"
+            placeholderTextColor="#888"
+            value={username}
+            onChangeText={setUsername}
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#888"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+
+          {/* Remember Me / Forgot Password */}
+          <View style={styles.rowBetween}>
+            <View style={styles.row}>
+              <CustomCheckbox checked={rememberMe} onPress={() => setRememberMe(!rememberMe)} />
+              <Text style={styles.reminderText}>Remember me</Text>
+            </View>
+            <TouchableOpacity onPress={() => console.log('Forgot Password')}>
+              <Text style={[styles.linkText, { color: COLORS.darkBlue }]}>Forgot Password?</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Login Button */}
+          <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('MainTabs')}>
+            <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
-        </View>
 
-        {/* Login Button */}
-        <TouchableOpacity style={styles.loginButton} onPress={() => console.log('Login')}>
-          <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
-
-        {/* Signup Link */}
-        <View style={styles.centerText}>
-          <Text style={styles.reminderText}>
-            New User?{' '}
-            <Text style={[styles.linkText, { color: COLORS.darkBlue }]} onPress={() => console.log('Signup')}>
-              SignUp
+          {/* Signup Link */}
+          <View style={styles.centerText}>
+            <Text style={styles.reminderText}>
+              New User?{' '}
+              <Text
+                style={[styles.linkText, { color: COLORS.darkBlue }]}
+                onPress={() => navigation.navigate('SignUpScreen')} // Change here
+              >
+                SignUp
+              </Text>
             </Text>
-          </Text>
 
-          <Text style={styles.orText}>OR Continue with</Text>
+            <Text style={styles.orText}>OR Continue with</Text>
 
-          {/* Social Links */}
-          <TouchableOpacity onPress={() => console.log('Google')}>
-            <Text style={[styles.linkText, { color: COLORS.darkBlue, marginBottom: 5 }]}>Google</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => console.log('Facebook')}>
-            <Text style={[styles.linkText, { color: COLORS.darkBlue }]}>Facebook</Text>
-          </TouchableOpacity>
+            {/* Social Icons Row */}
+            <View style={styles.socialRow}>
+              <TouchableOpacity style={styles.socialButton} onPress={() => console.log('Google')}>
+                <FontAwesome name="google" size={30} color="#DB4437" />
+                <Text style={styles.socialText}>Google</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.socialButton} onPress={() => console.log('Facebook')}>
+                <MaterialCommunityIcons name="facebook" size={30} color="#3b5998" />
+                <Text style={styles.socialText}>Facebook</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -138,11 +155,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.white,
   },
-  // --- Header Styles ---
-  topHeader: {
-    paddingHorizontal: 20,
-    // paddingTop and paddingBottom removed here, now handled by insets in UserOnboardingContent
-    paddingBottom: 20, 
+  // --- Background Header Styles ---
+  backgroundHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    zIndex: 2, // Increase zIndex so header is above scroll content
+    paddingTop: 40,
+    paddingBottom: 20,
   },
   headerText: {
     // Mimics a custom, thick, rounded font style
@@ -173,26 +195,27 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.backgroundTeal,
     alignItems: 'center',
     padding: 30,
+    zIndex: 1,
   },
   logoCircle: {
     width: width * 0.4,
     height: width * 0.4,
     borderRadius: (width * 0.4) / 2,
-    backgroundColor: COLORS.white,
+    backgroundColor: 'rgba(255,255,255,0.2)', // Transparent white
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: -width * 0.2, // Move the circle partially into the header area
+    marginTop: 0, // Show full circle, no negative margin
     marginBottom: 40,
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
+    elevation: 0,
+    shadowColor: 'transparent',
+    shadowOpacity: 0,
+    shadowRadius: 0,
   },
   logoText: {
     fontSize: 32,
     fontStyle: 'italic',
     fontWeight: '700',
-    color: '#000',
+    color: 'rgba(255,255,255,0.7)', // Transparent white text
   },
   welcomeText: {
     fontSize: 18,
@@ -245,9 +268,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.redText,
     marginRight: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.white, // Ensure background is white
   },
   checkboxChecked: {
     backgroundColor: COLORS.redText,
+  },
+  checkboxTick: {
+    color: COLORS.white,
+    fontSize: 14,
+    fontWeight: 'bold',
+    lineHeight: 16,
   },
 
   // --- Button Styles ---
@@ -274,5 +306,37 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.redText,
     marginVertical: 15,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    // paddingTop is now set inline in ScrollView for header visibility
+  },
+  socialRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 10,
+    gap: 20,
+  },
+  socialButton: {
+    flexDirection: 'row',
+    backgroundColor: COLORS.white,
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginHorizontal: 10,
+    elevation: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 120, // Ensure both buttons have the same minimum width
+    width: 150,
+  },
+  socialText: {
+    marginLeft: 8,
+    fontSize: 16,
+    color: COLORS.darkBlue,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });
