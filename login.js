@@ -12,6 +12,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import { useNavigation } from '@react-navigation/native'; // Add this import
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import SignUpScreen from './SignUpScreen';
 
 const { width } = Dimensions.get('window');
 
@@ -49,6 +50,42 @@ const UserOnboardingContent = () => {
   const insets = useSafeAreaInsets(); // Get current safe area insets
   const navigation = useNavigation(); // Add this line
 
+  // Add this function
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/loginWithPayload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+      const data = await response.json();
+      // Handle API response here (e.g., navigate on success)
+      print(data);
+      if (data.success) {
+        alert(data || 'Login Successful');
+        // navigation.navigate('MainTabs');
+      } else {
+        // Show error message or handle failure
+        alert(data.message || 'Login failed');
+      }
+    } catch (error) {
+      alert('Network error');
+    }
+  };
+  const handleGoogleLogin = () => {
+    // Implement Google login logic here
+    console.log('Google login pressed');
+
+  };
+  const handleFacebookLogin = () => {
+    // Implement Facebook login logic here
+    console.log('Facebook login pressed');
+  };
   return (
     <View style={[styles.fullScreen, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       {/* Background Header Section */}
@@ -95,13 +132,13 @@ const UserOnboardingContent = () => {
               <CustomCheckbox checked={rememberMe} onPress={() => setRememberMe(!rememberMe)} />
               <Text style={styles.reminderText}>Remember me</Text>
             </View>
-            <TouchableOpacity onPress={() => console.log('Forgot Password')}>
+            <TouchableOpacity onPress={() =>navigation.navigate('ForgotPassword')}>
               <Text style={[styles.linkText, { color: COLORS.darkBlue }]}>Forgot Password?</Text>
             </TouchableOpacity>
           </View>
 
           {/* Login Button */}
-          <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('MainTabs')}>
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
 
@@ -111,7 +148,7 @@ const UserOnboardingContent = () => {
               New User?{' '}
               <Text
                 style={[styles.linkText, { color: COLORS.darkBlue }]}
-                onPress={() => navigation.navigate('SignUpScreen')} // Change here
+                onPress={() => navigation.navigate('SignUp')} // Change here
               >
                 SignUp
               </Text>
@@ -121,11 +158,11 @@ const UserOnboardingContent = () => {
 
             {/* Social Icons Row */}
             <View style={styles.socialRow}>
-              <TouchableOpacity style={styles.socialButton} onPress={() => console.log('Google')}>
+              <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
                 <FontAwesome name="google" size={30} color="#DB4437" />
                 <Text style={styles.socialText}>Google</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.socialButton} onPress={() => console.log('Facebook')}>
+              <TouchableOpacity style={styles.socialButton} onPress={handleFacebookLogin}>
                 <MaterialCommunityIcons name="facebook" size={30} color="#3b5998" />
                 <Text style={styles.socialText}>Facebook</Text>
               </TouchableOpacity>

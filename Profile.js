@@ -47,6 +47,12 @@ const ProfileContent = () => {
     'Contact',
     'About Us',
   ];
+  const hadleMenuPress = (item) => () => {
+    if (item === 'Personal details') {
+      navigation.navigate('PersonalDetails');
+    }
+    // Add more navigation logic for other menu items as needed
+  }
 
   return (
     // Apply insets to the main container
@@ -71,7 +77,7 @@ const ProfileContent = () => {
             <MenuItem 
               key={index} 
               title={item} 
-              onPress={() => console.log(`Navigating to: ${item}`)} 
+              onPress={ hadleMenuPress(item) } 
             />
           ))}
 

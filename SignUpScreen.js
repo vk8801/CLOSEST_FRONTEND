@@ -133,12 +133,11 @@ const SignupContent = () => {
               Already a member?{' '}
               <Text 
                 style={[styles.linkText, { color: COLORS.darkBlue }]} 
-                onPress={() => navigation.navigate('Login')} // Change here
+                onPress={() => navigation.navigate('LogIn')} // Change here
               >
                 Login
               </Text>
             </Text>
-
             <Text style={styles.orText}>OR Continue with</Text>
 
             {/* Social Links */}
