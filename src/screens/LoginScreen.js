@@ -53,22 +53,25 @@ const UserOnboardingContent = () => {
   // Add this function
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/loginWithPayload', {
+      const response = await fetch('http://127.0.0.1:8000/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username,
-          password,
+          email:username,
+          password:password,
         }),
       });
       const data = await response.json();
       // Handle API response here (e.g., navigate on success)
-      print(data);
-      if (data.success) {
-        alert(data || 'Login Successful');
-        // navigation.navigate('MainTabs');
+      console.log(username, password);
+      console.log(data.status_code);
+      if (data.status_code === 200) {
+        
+        console.log("Login Success")
+        navigation.replace('Home'); // Navigate to Home screen on success
+  
       } else {
         // Show error message or handle failure
         alert(data.message || 'Login failed');
@@ -175,7 +178,7 @@ const UserOnboardingContent = () => {
 };
 
 // --- Main App Component (Wrapper) ---
-const UserOnboardingScreen = () => (
+const LogininScreen = () => (
   <SafeAreaProvider>
     <UserOnboardingContent />
   </SafeAreaProvider>
@@ -183,7 +186,7 @@ const UserOnboardingScreen = () => (
 
 
 // Set App as the export component
-export default UserOnboardingScreen;
+export default LogininScreen;
 
 // --- Styles ---
 

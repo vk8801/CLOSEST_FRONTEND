@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import App from './App';
-import login from './login';
+import LogininScreen from './LoginScreen';
 import SignUpScreen from './SignUpScreen';
 import ChatScreen from './ChatScreen';
 import ProfileScreen from './Profile';
@@ -18,7 +18,6 @@ const Stack = createNativeStackNavigator();
 function MainTabs() {
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="login" component={login} />
       <Tab.Screen name="Explore" component={App} />
       <Tab.Screen name="Match" component={MatchScreen} />
       <Tab.Screen name="Discover" component={App} />
@@ -29,9 +28,11 @@ function MainTabs() {
 }
 
 function RootNavigator() {
+  const isLoggedIn = false;
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName={isLoggedIn ? "Home" : "LogIn"}>
+      
         {/* Your bottom tab navigator (main app) */}
         <Stack.Screen
           name="Home"
@@ -47,7 +48,7 @@ function RootNavigator() {
         />
         <Stack.Screen
           name="LogIn"
-          component={login}
+          component={LogininScreen}
           options={{ title: 'Log In' }}
         />
         <Stack.Screen
